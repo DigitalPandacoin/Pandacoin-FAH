@@ -1,0 +1,72 @@
+usage:  crontab [-u user] file
+        crontab [-u user] [ -e | -l | -r ]
+                (default operation is replace, per 1003.2)
+        -e      (edit user's crontab)
+        -l      (list user's crontab)
+        -r      (delete user's crontab)
+        -i      (prompt before deleting user'
+        
+        
+        
+ <?php
+$output = shell_exec('crontab -l');
+file_put_contents('/tmp/crontab.txt', $output.'* * * * * NEW_CRON'.PHP_EOL);
+echo exec('crontab /tmp/crontab.txt');
+?>
+
+Delete (delete all?!?)
+echo exec('crontab -r');
+
+
+
+Nice solution but shell_exec('crontab -l') will only return the last line. I used exec('crontab -l', $output). Then implode the $output array into a string (with \n as the glue). – 
+
+--------------------------------------------------------------------------
+https://github.com/MediovskiTechnology/php-crontab-manager
+
+bin/cronman --enable /var/www/myproject/.cronfile --user www-data
+
+use php\manager\crontab\CrontabManager;
+
+$crontab = new CrontabManager();
+$crontab->enableOrUpdate('/tmp/my/crontab.txt');
+$crontab->save();
+
+
+use php\manager\crontab\CrontabManager;
+
+$crontab = new CrontabManager();
+$job = $crontab->newJob();
+$job->on('* * * * *');
+$job->onMinute('20-30')->doJob("echo foo");
+$crontab->add($job);
+$job->onMinute('35-40')->doJob("echo bar");
+$crontab->add($job);
+$crontab->save();
+--------------------------------------------------------------------------
+
+
+*     *     *   *    *        command to be executed
+-     -     -   -    -
+|     |     |   |    |
+|     |     |   |    +----- day of week (0 - 6) (Sunday=0)
+|     |     |   +------- month (1 - 12)
+|     |     +--------- day of        month (1 - 31)
+|     +----------- hour (0 - 23)
++------------- min (0 - 59)
+
+min 	hour 	day/month 	month 	day/week 	Execution time
+30 		0 		1 			1,6,12 	* 	— 00:30 Hrs  on 1st of Jan, June & Dec.
+0 		20 		* 			10 		1-5 	–8.00 PM every weekday (Mon-Fri) only in Oct.
+0 	0 	1,10,15 	* 	* 	— midnight on 1st ,10th & 15th of month
+5,10 	0 	10 	* 	1 	— At 12.05,12.10 every Monday & on 10th of every month
+
+
+*/2  - every 2 minutes
+non blocking exec: exec($cmd . " > /dev/null &");   
+
+Weekly notes: 
+
+* * */7 * *  - runs every minute of every hour once a 7 days
+0 0 */7 * *  - runs once every 7 days at 12:00 local time (support for UTC is spotty and problematic)
+

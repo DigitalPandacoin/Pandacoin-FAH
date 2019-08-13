@@ -1,0 +1,105 @@
+New JSON API:
+
+http://folding.stanford.edu/stats/api
+
+http://folding.stanford.edu/stats/api/team/226715
+
+$result["donors"][$idx]
+
+array(8) { 
+	["wus"]=> int(17142) 
+	["credit_cert"]=> string(41) "api/awards/donor/credit/1738841/325980522" 
+	["name"]=> string(6) "gama-1" 
+	["rank"]=> int(789) 
+	["credit"]=> int(325980522) 
+	["team"]=> int(226715) 
+	["wus_cert"]=> string(34) "api/awards/donor/wus/1738841/17142" 
+	["id"]=> int(1738841) 
+}  
+
+How can I get a copy of all of the current stats?
+
+Please feel free to download http://fah-web.stanford.edu/daily_user_summary.txt or http://fah-web.stanford.edu/daily_team_summary.txt 
+These files are updated every 3 hours. Please DO NOT run a crawler on our cgi pages. Such actions will result in your IP being permanently banned.
+
+
+
+
+Polling Team/User statistics directly from folding.standford.edu
+
+
+The donor and team stats are updated every hour, although this can be delayed 
+if there were a lot of work units to come back during that hour. We have been 
+turning off web access to the stats database during stats updates (usually on the hour).
+
+Please do not use scripts to access the donor or team pages, but use the full donor list (flat files) instead. 
+IP addresses which do not abide by our robots.txt rules will be banned.
+
+The donor and team lists are generated now every hour and can be downloaded once an hour from these links:
+
+
+Info page: https://folding.stanford.edu/home/teams-stats/
+
+User:
+
+http://fah-web.stanford.edu/daily_user_summary.txt.bz2
+
+Team:
+
+http://fah-web.stanford.edu/daily_team_summary.txt.bz2
+
+
+Downloads of the daily donor and team lists should be limited to no more than 24 downloads a day.
+
+
+Tested on Nov 9, 2015:
+
+daily_user_summary.txt.bz2  - 15.8 MB 
+daily_user_summary.txt  - 15.8 MB (inneffective compression?)
+
+Snippet after dashes:
+------------------------------------
+Mon Nov  9 16:20:02 PST 2015
+name	newcredit	sum(total)	team
+anonymous	8723659730	59392347	0
+Mtnduey	5273159075	35607	33
+war	4769737375	190369	37651
+inder372	3715211819	54727	111065
+PS3EdOlkkola	3645734805	103031	224497
+awachs	3280496451	545727	181223
+TheWasp	3229697700	484806	70335
+brilong	3183762737	22964	33
+------------------------------------
+...
+(line 16760)
+SoCo-Gateway	4294346	1983	226715
+...
+(line 20952)
+SoCo_Vicky	3031062	1385	226715
+...
+blank line at end, total lines 1,692,621
+------------------------------------
+
+Tested on Nov 9, 2015:
+
+daily_team_summary.txt.bz2 - 1.2 MB
+daily_team_summary.txt - 1.2 MB inneffective compression?)
+
+Snippet after dashes:
+------------------------------------
+Mon Nov  9 16:20:02 PST 2015
+team	teamname	score	wu
+111065	folding@evga	70546433642	20930261
+0	Default (includes all those WU returned without valid team number)	68467193340	146838469
+33	[H]ardOCP	52147497594	19657117
+37726	Overclock.net	34184563250	10455818
+224497	Curecoin	29204314032	3331109
+32	www.overclockers.com	24677545400	12113402
+------------------------------------
+...
+(line 514)
+226715	dogefolders	71549627	38743
+....
+------------------------------------
+blank line at end, total lines 92,406
+------------------------------------

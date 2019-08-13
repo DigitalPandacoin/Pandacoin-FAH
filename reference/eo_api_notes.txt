@@ -1,0 +1,20 @@
+extremeoverclocking.com API
+
+
+http://folding.extremeoverclocking.com/?nav=XML
+
+    You only need to query once every 3 hours since the data is not updated any more often than that. You can query more often to make coding easier, however *please* no more than one cycle per hour.
+    This data is for personal / team use only. I don't want to see someone ripping off my stats page using my own data (which I have seen in the past).
+    You can not charge a fee for whatever service or program if you are utilizing any of this data. The stats are meant to be free to all, it's for a good cause.
+    The URLs below are simply examples, you will need to replace the team or user id with your own.
+    If you need help or some custom data that isn't provided, please feel free to email me.
+    Only use data from these feeds, attempting to parse the regular pages is a bad idea, and if I catch you I will block your IP.
+    Try to rate limit your queries. By that I mean don't try to make a couple dozen queries in one second.
+    Be aware that excessive amounts of queries (or queries per second) can get your IP blocked!
+    XML is NOT an RSS feed, so don't email me saying you can't get it to work in your RSS program. 
+
+    Team Info Example:
+        XML URL: http://folding.extremeoverclocking.com/xml/team_summary.php?t=11314 
+    User Info Examples:
+        XML URL: http://folding.extremeoverclocking.com/xml/user_summary.php?u=32334
+        Alternate XML URL: http://folding.extremeoverclocking.com/xml/user_summary.php?un=EOC_Jason&t=11314 

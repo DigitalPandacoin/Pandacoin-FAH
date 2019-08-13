@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!--
+	Transit by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Dogecoin Folding @ Home - Chart</title>
+		
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="Payout history chart for Dogecoinfah." />
+		<meta name="keywords" content="dogecoin doge crypto folding mining history chart rounds week pay" />
+		<!--[if lte IE 8]><script src="js/html5shiv.js"></script><![endif]-->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-layers.min.js"></script>
+		<script src="js/init.js"></script>
+		<script src="js/Chart.bundle.min.js"></script>
+		<script src="js/jquery.qrcode.min.js"></script>
+		<script src="js/dfahlivedata.js"></script>
+		<script src="js/dfahlivehistorychart.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/style-noscript.css" />
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-xlarge.css" />
+		</noscript>
+		<link rel="stylesheet" href="css/style-history.css" />
+	</head>
+	<body class="landing" onload="initLiveHistoryChart();" >
+		<div id="removespacer">
+				<div id="logo">
+					<img src="images/dfahlogo_sm.png" alt="" />
+					<div id="extratitle">
+						<div>
+							<a href="#">Dogecoin Fah</a><br/>
+							<a href="http://folding.extremeoverclocking.com/team_summary.php?s=&amp;t=226715">226715</a>
+						</div>
+					</div>
+				</div>
+				<div id="livedata" >
+					<div id="livedataqr">
+						<a id="liveqr" href="#"></a>
+					</div>
+					<div id="livedatatx">
+							<div id="livedonate">Donate <span id="livedonateextra">towards this week's payout!</span></div>
+					</div>
+					<div style="white-space: nowrap;overflow: hidden; ">
+						<a id="liveaddr" href="#">&nbsp;</a>
+					</div>
+				</div>
+		<!-- Banner -->
+			<section id="banner">
+				<h2>Hi. This is Dogecoin Folding at Home.</h2>
+				
+				<p>Earn Dogecoins by helping find cures!</p>
+			
+				<ul class="actions">
+					<li><a href="index.html" class="button big icon fa-home">Home</a></li>
+					<li><a href="history.html" class="button big icon fa-list-alt">Payout History</a></li>
+					<li><a href="#sechistory" class="button big icon fa-angle-double-down">Payout Chart</a></li>
+					<li><a href="sponsors.html" class="button big icon fa-sitemap">Sponsorship</a></li>
+				</ul>
+				<p>Funded by donations.</p>
+			</section>
+		</div>
+				<div class='jsonly'>
+					<div id="contributions">&nbsp;</div>
+					<!--<div style='text-align:center;'>-->
+						<div class='contfund'>
+							<div class='bkwt'>
+								<div id='cont_title'>This week's payout</div>
+								<div id='livedatacont'>
+									<div id='livedatadate'>&nbsp;</div>
+									<noscript>
+										<span>Live donation balance requires JavaScript to display.</span>
+									</noscript>
+								</div>
+								<div id="livebalct">
+									<div id="livebal">&nbsp;</div>
+								</div>
+							</div>
+						</div>
+					<!--</div>-->
+				</div>	
+		<!-- One -->
+			<section id="sechistory" class="wrapper style1 special">
+				<div class="container">
+					<header class="major">
+						<h2>Payout History Chart</h2>
+					</header>
+						<noscript><div>Sorry, payout history charting absolutely requires JavaScript to display.<br/>This is where a nice chart of payout history would be if you enabled JavaScript.<br/>This chart is generated dynamically by <a href="./js/dfahlivehistorychart.js">dfahlivehistorychart.js</a> from the data in <a href="./PublicRoundData.json">PublicRoundData.json</a>.</div></noscript>
+						<div id="chart"></div>
+					</div>
+				</div>
+			</section>
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="container">
+					<div class="row">
+						<div class="8u 12u$(medium)">
+							<ul class="copyright unstyled">
+								<li>&copy; DogecoinFah. All rights reserved.</li>
+								<li>Design: <a target="_blank" href="http://templated.co">TEMPLATED</a></li>
+								<li>Images: <a target="_blank" href="http://unsplash.com">Unsplash</a></li>
+								<li>Website Admin: <a id="m3" class="icon fa-envelope" target="_blank" href="mailto:admin%20dogecoinfah%20com"></a>&nbsp;&nbsp;<a target="_blank" id="m4" href="mailto:admin%20dogecoinfah%20com">admin<i class="fa fa-at" aria-hidden="true"> </i>dogecoinfah.com</a></li> 
+							</ul>
+						</div>
+					</div>
+				</div>
+			</footer>
+	</body>
+</html>

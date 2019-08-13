@@ -1,0 +1,6 @@
+	<?php 
+		include("./include/XLib/XInit.php");
+		if ( !defined('IS_INITTED') || IS_INITTED != true )
+			die("XInit.php failed.");
+	?>
+

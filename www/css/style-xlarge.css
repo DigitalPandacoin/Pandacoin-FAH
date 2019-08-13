@@ -1,0 +1,18 @@
+/*
+	Transit by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+*/
+
+/* Basic */
+	#removespacer{
+		height: 610px;
+	}
+
+	body, input, select, textarea {
+		font-size: 14pt;
+	}
+	
+	#liveteamex {
+		width: 280px;
+	}

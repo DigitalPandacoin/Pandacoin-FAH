@@ -1,0 +1,43 @@
+/* CSS Document */
+
+* { 
+	margin:0; padding:0;
+	border:0;
+}
+.logo {float:left; } /*width:100px; height: 100px;}*/
+.logo img { max-width:70px;  max-height:70px;}
+.header { padding:20px 0px;background-color: red;width:100%;min-height:34px;}
+.header-title { text-align:center;font-weight:bold;font-size:130%;}
+.under{ border-bottom:1px solid #171412}
+.pad_bot1{ padding-bottom:40px;}
+.pad_bot2{ padding-bottom:30px;}
+.pad_bot3{ padding-bottom:20px;}
+.marg_top1{ margin-top:37px}
+.marg_bot1{ margin-bottom:37px}
+.marg_left1{ margin-left:30px;}
+.wrapper {width:100%; overflow:hidden;}
+.left{ float:left;}
+.right{ float:right}
+.col_1{ width:180px; float:left}
+.col_2{ width:203px; float:left; padding-left:30px;}
+.col1{ width:620px; float:left;}
+.pad_left1{ padding-left:21px;}
+#menu { height:100%; background: #000000; list-style-type: none;}
+#menu li { background:#AAAAAA; text-transform:none; float:left; margin-right:1px; }
+#menu li a{ padding: 0 10px;display:block; text-transform:none; line-height:32px; text-decoration:none}
+#menu li a:hover, #menu #menu_active a{ line-height:44px; background:#fff;}
+
+.admin-table {table-layout:fixed;width:100%; border: #808080 inset 1px;padding:2px 2px 2px 2px;margin:5px 5px 5px 5px;color: black;background:#888888;}
+.admin-scrolltable-header tr {position: relative;display: block;}
+.admin-scrolltable-header tr th {border: #808080 inset 1px;padding:3px 2px 3px 2px;}
+.admin-scrolltable-body {display: block;overflow: auto;height: 210px;background:#606060;}
+.admin-row {border: #808080 inset 1px;padding:3px 2px 3px 2px; color: black;background:#AAAAAA;}
+.admin-row:hover {color: navy;background:#EEEEEE;}
+.admin-row td {text-overflow:ellipsis;overflow-x:hidden;border: #808080 inset 1px;padding:3px 2px 3px 2px; }
+.admin-row-sel td{text-overflow:ellipsis;overflow-x:hidden;font-weight:bold;border: #808080 inset 1px;padding:3px 2px 3px 2px; color: navy;background:#EEEEEE;}
+.admin-edit {border: #808080 inset 1px;color: black; background:#888888;padding: 5px 10px 5px 10px;margin:5px 5px 5px 5px;}
+.admin-rawtext {white-space:nowrap; overflow: auto; width: 100%; border: #808080 inset 1px;padding:2px 2px 2px 2px;margin:5px 5px 5px 5px;color: black; background:#AAAAAA;}
+
+.admin-priv-table {table-layout:fixed;width:100%; border: #808080 inset 1px;padding:2px 2px 2px 2px;margin:5px 5px 5px 5px;color: black;background:#888888;}
+.admin-priv-row {border: #808080 inset 1px;padding:3px 2px 3px 2px; color: black;background:#AAAAAA;}
+.admin-priv-row td {text-overflow:ellipsis;overflow-x:hidden;border: #808080 inset 1px;padding:3px 2px 3px 2px; }

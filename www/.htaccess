@@ -1,0 +1,6 @@
+# These automation scripts only accessed directly
+#  by PHP parser, never through webserver.
+# For this restriction to work, mod rewrite must be on 
+# and override must be allowed.
+
+Options -Indexes 

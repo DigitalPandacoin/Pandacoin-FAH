@@ -1,0 +1,31 @@
+# These automation scripts only accessed directly
+#  by PHP parser, never through webserver.
+# For this restriction to work, mod rewrite must be on 
+# and override must be allowed.
+
+Options -Indexes 
+
+<Files  "AutomationFahStat.php">
+	Order deny,allow
+	Deny from all
+</Files>
+
+<Files  "AutomationStat.php">
+	Order deny,allow
+	Deny from all
+</Files>
+
+<Files  "AutomationRound.php">
+	Order deny,allow
+	Deny from all
+</Files>
+
+<Files  "AutomationNewRound.php">
+	Order deny,allow
+	Deny from all
+</Files>
+
+<Files  "AutomationPublicData.php">
+	Order deny,allow
+	Deny from all
+</Files>

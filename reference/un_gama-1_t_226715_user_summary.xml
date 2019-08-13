@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<EOC_Folding_Stats>
+ <team>
+  <Team_Name>dogefolders</Team_Name>
+  <TeamID>226715</TeamID>
+  <Rank>488</Rank>
+  <Users_Active>7</Users_Active>
+  <Users>102</Users>
+  <Change_Rank_24hr>0</Change_Rank_24hr>
+  <Change_Rank_7days>-3</Change_Rank_7days>
+  <Points_24hr_Avg>114754</Points_24hr_Avg>
+  <Points_Update>4006</Points_Update>
+  <Points_Today>65474</Points_Today>
+  <Points_Week>546710</Points_Week>
+  <Points>85087483</Points>
+  <WUs>43236</WUs>
+ </team>
+ <user>
+  <User_Name>gama-1</User_Name>
+  <UserID>661856</UserID>
+  <Team_Rank>1</Team_Rank>
+  <Overall_Rank>4879</Overall_Rank>
+  <Change_Rank_24hr>0</Change_Rank_24hr>
+  <Change_Rank_7days>0</Change_Rank_7days>
+  <Points_24hr_Avg>79465</Points_24hr_Avg>
+  <Points_Update>4006</Points_Update>
+  <Points_Today>47054</Points_Today>
+  <Points_Week>402072</Points_Week>
+  <Points>24553399</Points>
+  <WUs>5253</WUs>
+ </user>
+ <status>
+  <Last_Update>20160204180000</Last_Update>
+  <Last_Update_Unix_TimeStamp>1454630400</Last_Update_Unix_TimeStamp>
+  <Update_Status>Current</Update_Status>
+ </status>
+</EOC_Folding_Stats>
+<!-- Page generated in 0.00063 seconds -->

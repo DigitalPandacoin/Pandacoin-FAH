@@ -1,0 +1,657 @@
+<?php
+//-------------------------------------------------------------
+/*
+ *	www/Install.php
+ * 
+ * Copy this default stub file www/Install.php.default
+ * to www/Install.php
+ * then enter your credentials to prevent accedental 
+ * repository committing.
+*/
+//-------------------------------------------------------------
+//define('C_INSTALL_PASSWORD', 		''); // @CHANGEME
+define('C_DEFAULT_USER_NAME', 		'admin');
+define('C_DEFAULT_USER_FULL_NAME', 	'Administrator');
+//define('C_DEFAULT_USER_PASS', 		''); // @CHANGEME
+define('C_DEFAULT_USER_PRIV', 		'U');
+//-------------------------------------------------------------
+define('IS_LOGIN',		true);
+define('IS_ADMIN',		true);
+define('IS_INSTALL',	true);
+//-------------------------------------------------------------
+require('./include/Init.php');
+//-------------------------------------------------------------
+$CurTableVersions = array();
+//-------------------------------------------------------------
+$p = XGet('p');
+if ($p != "" && is_numeric($p))
+{
+	switch ($p)
+	{
+		case 0: header("Location: ./Index.php"); break;
+		case 1: header("Location: ./Admin.php"); break;
+		case 2: header("Location: ./Install.php"); break;
+	}
+}
+//-------------------------------------------------------------
+function getTableList()
+{
+	global $Login;
+	global $xdbUserFields;
+	global $dbConfigFields;
+	global $dbWorkerFields;
+	global $dbRoundFields;
+	global $dbPayoutFields;
+	global $dbStatsFields;
+	global $dbContributionFields;
+	global $dbAds;
+	global $dbTeamFields;
+	
+	$lst = array();
+	//----------------------
+	$lst[] = array($Login, 		 		$xdbUserFields,			"Login");
+	$lst[] = array(new Config(), 		$dbConfigFields,		"Config");
+	$lst[] = array(new Workers(), 		$dbWorkerFields,		"Workers");
+	$lst[] = array(new Rounds(), 		$dbRoundFields,			"Rounds");
+	$lst[] = array(new Payouts(), 		$dbPayoutFields,		"Payouts");
+	$lst[] = array(new Stats(), 		$dbStatsFields,			"Stats");
+	$lst[] = array(new Contributions(), $dbContributionFields,	"Contributions");
+	$lst[] = array(new Ads(),			$dbAds, 				"Ads");
+	$lst[] = array(new Team(),			$dbTeamFields,			"Team");
+	//----------------------
+	return $lst;
+}
+//-------------------------------------------------------------
+function createDatabase()
+{
+	$lastObj = null;
+	//----------------------
+	$tableList = getTableList();
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		//----------------------
+		echo "Installing $tblName DB table...<br/>\n";
+		//----------------------
+		if ($lastObj == $obj)
+			echo "skipped<br/>\n";
+		else if (!$obj->Install())
+		{
+			//----------------------
+			XLogError("install.php - table '$tblName' failed to Install");
+			echo "<span style='font-weight:bold;color:red;'>Failed!</span><br/>\n";
+			//----------------------
+			return false;
+		}
+		//----------------------
+		$lastObj = $obj;
+		echo "Installing $tblName DB table...DONE<br/>\n";
+		//----------------------
+	} // foreach
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function initDatabase()
+{
+	//----------------------
+	global $Login;
+	echo "<div>Initting Login DB...</div>\r";
+	if (!$Login->AddUser(C_DEFAULT_USER_NAME, C_DEFAULT_USER_FULL_NAME, C_DEFAULT_USER_PRIV, C_DEFAULT_USER_PASS, false/*time zone*/, true/*bypasPrivCheck*/))
+		{XLogError("Install.php - initDatabase - Add default admin user failed"); return false;}
+	echo "<div>Initting Login DB...DONE</div>\r";
+	//----------------------
+	echo "<div>Initting Config DB...</div>\r";
+	$config = new Config();
+	//----------------------
+	if (!$config->Init())
+		{XLogError("Install.php - initDatabase - Config Init failed"); return false;}
+	echo "<div>Initting Config DB...DONE</div>\r";
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function setTableVersions()
+{
+	$config = new Config();
+	//----------------------
+	echo "Setting DB table versions...<br/>\n";
+	//----------------------
+	$tableList = getTableList();
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		//----------------------
+		if (!setTableVersion($tblFields->tableName, $tblFields->tableVersion))
+		{
+			//----------------------
+			XLogError("install.php - setTableVersions - setTableVersion failed");
+			echo "<span style='font-weight:bold;color:red;'>Failed!</span><br/>\n";
+			//----------------------
+			return false;
+		}
+		//----------------------
+	} // foreach
+	//----------------------
+	echo "Setting DB table versions...DONE<br/>\n";
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function dropDatabase()
+{
+	$r = true;
+	$lastObj = null;
+	//----------------------
+	$tableList = getTableList();
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		//----------------------
+		echo "Uninstalling $tblName DB table...<br/>\n";
+		//----------------------
+		if ($lastObj == $obj)
+			echo "skipped<br/>\n";
+		else if (!$obj->Uninstall())
+		{
+			//----------------------
+			XLogError("install.php - dropDatabase - table '$tblName' failed to Uninstall");
+			echo "<span style='font-weight:bold;color:red;'>Failed!</span><br/>\n";
+			//----------------------
+			$r = false;
+			//----------------------
+		}
+		//----------------------
+		$lastObj = $obj;
+		echo "Uninstalling $tblName DB table...DONE<br/>\n";
+		//----------------------
+	} // foreach
+	//----------------------
+	return $r;
+}
+//-------------------------------------------------------------
+function backupDatabase($prefix = 'bak_')
+{
+	global $db, $dbConfigFields;
+	//----------------------
+	$tableList = getTableList();
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		if (XPost($tblName) != "")
+		{
+			//----------------------
+			$bakTableName = "$prefix$tblFields->tableName";
+			//----------------------
+			echo "Backing up $tblName DB table...<br/>\n";
+			//----------------------
+			$sql = "DROP TABLE IF EXISTS $bakTableName";
+			//----------------------
+			if (!$db->Execute($sql))
+			{
+				XLogError("install.php - backupDatabase - drop table failed.\nsql: $sql\n".mysql_error());
+				return false;
+			}
+			//----------------------
+			$sql = "CREATE TABLE $bakTableName LIKE $tblFields->tableName";
+			//----------------------
+			if (!$db->Execute($sql))
+			{
+				XLogError("install.php - backupDatabase - create table failed.\nsql: $sql\n".mysql_error());
+				return false;
+			}
+			//----------------------
+			$sql = "INSERT INTO $bakTableName SELECT * FROM $tblFields->tableName";
+			//----------------------
+			if (!$db->Execute($sql))
+			{
+				XLogError("install.php - backupDatabase - copy table failed.\nsql: $sql\n".mysql_error());
+				return false;
+			}
+			//----------------------
+			echo "Backing up $tblName DB table...DONE<br/>\n";
+			//----------------------
+			if (!setTableVersion($bakTableName, $tblFields->tableVersion))
+			{
+				XLogError("install.php - backupDatabase - table '$bakTableName' failed to setTableVersion to ".$tblFields->tableVersion);
+				echo "<span style='font-weight:bold;color:red;'>...but failed to update table version!</span><br/>\n";
+			}
+			//----------------------
+		}
+		//----------------------
+	} // foreach
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function importDatabase($prefix = 'bak_')
+{
+	global $db, $dbConfigFields;
+	//----------------------
+	$tableList = getTableList();
+	//----------------------
+	if (!getTableVersions($prefix))
+	{
+		XLogError("install.php - importDatabase - getTableVersions failed");
+		return false;
+	}
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		if (XPost($tblName) != "")
+		{
+			//----------------------
+			$oldTableName = "$prefix$tblFields->tableName";
+			$oldTableVer = getTableVersion($oldTableName);
+			if ($oldTableVer === false)
+			{
+				XLogNotify("install.php - importDatabase - getTableVersion for '$oldTableName' failed, getting table current version.");
+				list($oldTableVer, $oldTableName) = lookupTableVersion($oldTableName);
+			}
+			//----------------------
+			XLogNotify("install.php - importDatabase - lookupTableVersion: $tblName, oldver: $oldTableVer, oldTableName: $oldTableName, prefix: $prefix, table name: ".$tblFields->tableName);
+			//----------------------
+			echo "Importing $tblName (v $tblFields->tableVersion) DB table from $oldTableName (v $oldTableVer)...<br/>\n";
+			//----------------------
+			$r = $obj->Import($oldTableVer, $oldTableName);
+			//----------------------
+			if (!$r)
+			{
+				XLogError("install.php - importDatabase - table '$tblName' failed to Import");
+				echo "<span style='font-weight:bold;color:red;'>Failed!</span><br/>\n";
+				return false;
+			}
+			else echo "Importing $tblName (v $tblFields->tableVersion) DB table from $oldTableName (v $oldTableVer)...DONE<br/>\n";
+			//----------------------
+			if (!setTableVersion($tblFields->tableName, $tblFields->tableVersion))
+			{
+				XLogError("install.php - importDatabase - table '$tblName' failed to setTableVersion to ".$tblFields->tableVersion);
+				echo "<span style='font-weight:bold;color:red;'>...but failed to update table version!</span><br/>\n";
+			}
+			//----------------------
+		}// if xpost
+		//----------------------
+	} // foreach
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function uninstallTables($prefix = 'bak_')
+{
+	global $db, $dbConfigFields;
+	//----------------------
+	$tableList = getTableList();
+	//----------------------
+	if (!getTableVersions($prefix))
+	{
+		XLogError("install.php - uninstallTables - getTableVersions failed");
+		return false;
+	}
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		if (XPost($tblName) != "")
+		{
+			//----------------------
+			list($oldTableVer, $oldTableName) = lookupTableVersion($tblName);
+			//----------------------
+			if (!$obj->Uninstall())
+			{
+				XLogError("install.php - uninstallTables - table '$tblName' failed to Uninstall");
+				echo "<span style='font-weight:bold;color:red;'>Failed!</span><br/>\n";
+				return false;
+			}
+			else echo "Uninstalled $tblName (v $tblFields->tableVersion) DB table from $oldTableName (v $oldTableVer).<br/>\n";
+			//----------------------
+		}// if xpost
+		//----------------------
+	} // foreach
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function installTables($prefix = 'bak_')
+{
+	global $db, $dbConfigFields;
+	//----------------------
+	$tableList = getTableList();
+	//----------------------
+	if (!getTableVersions($prefix))
+	{
+		XLogError("install.php - installTables - getTableVersions failed");
+		return false;
+	}
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		if (XPost($tblName) != "")
+		{
+			//----------------------
+			list($oldTableVer, $oldTableName) = lookupTableVersion($tblName);
+			//----------------------
+			if (!$obj->Install())
+			{
+				XLogError("install.php - installTables - table '$tblName' failed to Uninstall");
+				echo "<span style='font-weight:bold;color:red;'>Failed!</span><br/>\n";
+				return false;
+			}
+			else echo "Installed $tblName (v $tblFields->tableVersion) DB table from $oldTableName (v $oldTableVer).<br/>\n";
+			//----------------------
+			if (!setTableVersion($tblFields->tableName, $tblFields->tableVersion))
+			{
+				XLogError("install.php - installTables - table '$tblName' failed to setTableVersion to ".$tblFields->tableVersion);
+				echo "<span style='font-weight:bold;color:red;'>...but failed to update table version!</span><br/>\n";
+			}
+			//----------------------
+			
+		}// if xpost
+		//----------------------
+	} // foreach
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function getTableVersions($prefix = 'bak_')
+{
+	global $db, $dbConfigFields, $CurTableVersions;
+	//----------------------
+	$config = new Config();
+	$tableList = getTableList();
+	//----------------------
+	foreach ($tableList as $tbl)
+	{
+		list($obj, $tblFields, $tblName) = $tbl;
+		$CurTableVersions[] = array($tblName, $config->Get("dbtablever:$tblName"), $config->Get("dbtablename:$tblName"));
+	} // foreach
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function setTableVersion($tblName, $tblVersion)
+{
+	//----------------------
+	$config = new Config();
+	$config->set("dbtablename:$tblName", $tblName);
+	$config->set("dbtablever:$tblName", "".$tblVersion);
+	//----------------------
+	return true;
+}
+//-------------------------------------------------------------
+function getTableVersion($tblName)
+{
+	//----------------------
+	$config = new Config();
+	//----------------------
+	return $config->set("dbtablever:$tblName", $tblName);
+}
+//-------------------------------------------------------------
+function lookupTableVersion($tblName)
+{
+	global $CurTableVersions;
+	foreach ($CurTableVersions as $tver)
+	{
+		list($name, $ver, $tblName) = $tver;
+		if ($name == $tblName)
+			return array( ($ver === false || !is_numeric($ver) ? 0 : (int)$ver), ($tblName === false ? "" : $tblName));
+	}		
+	return array(2, "");
+}
+//---------------------------------
+$title = X_TITLE." - Administration - Installation";
+//---------------------------------
+echo htmlHeader($title);
+echo htmlHeaderBar($title);
+//---------------------------------
+if (!defined('C_INSTALL_PASSWORD') || !defined('C_DEFAULT_USER_FULL_NAME') || !defined('C_DEFAULT_USER_PASS') || !defined('C_DEFAULT_USER_PRIV'))
+{
+	echo "<div style='color: red;'>Before continuing, you must modify Install.php to set C_INSTALL_PASSWORD, C_DEFAULT_USER_FULL_NAME, C_DEFAULT_USER_PASS, and C_DEFAULT_USER_PRIV.</div>\n";
+	echo htmlFooter();
+	exit;
+}
+//---------------------------------
+$fnMenuItems = array();
+$fnMenuItems[] = "Home";
+$fnMenuItems[] = "Admin";
+$fnMenuItems[] = "Install";
+//---------------
+echo htmlMenu($fnMenuItems, "./Install.php", false/*params*/, 2 /*Selected Page Index*/);
+//---------------------------------
+echo "<!--content -->\n";
+//-------------------------------------------------------------
+if (!isset($_SESSION[SESS_SECURITY_TOKEN]))
+{
+	echo '<div class="loginError">Security token missing. Please refresh this page to continue.</div>'."\n";
+	exit;
+}
+//-------------------------------------------------------------
+if (XGet('error') == 'login_fail')
+{
+	echo '<div class="loginError">Login failed. Please check your user name and password, then try again.</div>'."\n";
+}
+//-------------------------------------------------------------
+if (!function_exists("bcmul") || !function_exists("bcadd") || !function_exists("bccomp") || !function_exists("bcsub"))
+{
+	echo '<div class="loginError">Dependency PHP BC Math module not detected.</div>'."\n";
+}
+//-------------------------------------------------------------
+if (XPost('action') == 'Install')
+{
+	
+	//----------------------
+	if (XPost('pass') == C_INSTALL_PASSWORD)
+	{
+		echo "<div>Creating Database tables...</div>\n";
+		if (!createDatabase())
+			echo "<div style='color: red;'>Some create database failures occured.</div>\n";
+		else
+		{
+			echo "<div style='color: green;'>All create database operations succeeded.</div>\n";
+			if (!initDatabase())
+				echo "<div style='color : red;'>Some init database failures occured.</div>\n";
+			else
+			{
+				echo "<div style='color: green;'>All init database operations succeeded.</div>\n";
+				if (!setTableVersions())
+					echo "<div style='color : red;'>Store database table versions in config failed.</div>\n";
+				else
+					echo "<div style='color: green;'>All database operations succeeded.</div>\n";
+			}
+		}
+		echo "<div>Creating Database tables...done</div>\n";
+		$automation = new Automation() or die("Create object failed");
+		if (!$automation->Install())
+			echo "<div style='color: red;'>Install Automation failed.</div>\n";
+		else
+			echo "<div style='color: green;'>Install Automation done.</div>\n";
+	}
+	else
+	{
+		echo "Password Incorrect";
+		sleep(3);
+		exit;
+	}
+	//----------------------
+}
+else if (XPost('action') == 'Uninstall')
+{
+	//----------------------
+	if (XPost('pass') == C_INSTALL_PASSWORD)
+	{
+		if (!dropDatabase())
+		{
+			echo "<div style='color: red;'>Some drop failures occured.</div>\n";
+		}
+		else
+		{
+			echo "<div style='color: green;'>All Uninstallations operations succeeded.</div>\n";
+		}
+	}
+	else
+	{
+		echo "Password Incorrect";
+		sleep(3);
+		exit;
+	}
+	//----------------------
+}
+else if (XPost('action') == 'Backup')
+{
+	//----------------------
+	if (XPost('pass') == C_INSTALL_PASSWORD)
+	{
+		$prefix = XPost("prefix");
+		if ($prefix == "")
+			$prefix = 'bak_';
+		if (!backupDatabase($prefix))
+		{
+			echo "<div style='color: red;'>Some backup failures occured.</div>\n";
+		}
+		else
+		{
+			echo "<div style='color: green;'>All backup operations succeeded.</div>\n";
+		}
+	}
+	else
+	{
+		echo "Password Incorrect";
+		sleep(3);
+		exit;
+	}
+	//----------------------
+}
+else if (XPost('action') == 'Import')
+{
+	//----------------------
+	if (XPost('pass') == C_INSTALL_PASSWORD)
+	{
+		$prefix = XPost("prefix");
+		if ($prefix == "")
+			$prefix = 'bak_';
+		if (!importDatabase($prefix))
+		{
+			echo "<div style='color: red;'>Some import failures occured.</div>\n";
+		}
+		else
+		{
+			echo "<div style='color: green;'>All import operations succeeded.</div>\n";
+		}
+	}
+	else
+	{
+		echo "Password Incorrect";
+		sleep(3);
+		exit;
+	}
+	//----------------------
+}
+else if (XPost('action') == 'Uninstall Tables')
+{
+	//----------------------
+	if (XPost('pass') == C_INSTALL_PASSWORD)
+	{
+		$prefix = XPost("prefix");
+		if ($prefix == "")
+			$prefix = 'bak_';
+		if (!uninstallTables($prefix))
+		{
+			echo "<div style='color: red;'>Some table uninstall failures occured.</div>\n";
+		}
+		else
+		{
+			echo "<div style='color: green;'>All table uninstall operations succeeded.</div>\n";
+		}
+	}
+	else
+	{
+		echo "Password Incorrect";
+		sleep(3);
+		exit;
+	}
+	//----------------------
+}
+else if (XPost('action') == 'Install Tables')
+{
+	//----------------------
+	if (XPost('pass') == C_INSTALL_PASSWORD)
+	{
+		$prefix = XPost("prefix");
+		if ($prefix == "")
+			$prefix = 'bak_';
+		if (!installTables($prefix))
+		{
+			echo "<div style='color: red;'>Some table install failures occured.</div>\n";
+		}
+		else
+		{
+			echo "<div style='color: green;'>All table install operations succeeded.</div>\n";
+		}
+	}
+	else
+	{
+		echo "Password Incorrect";
+		sleep(3);
+		exit;
+	}
+	//----------------------
+}
+//-------------------------------------------------------------
+?>
+<div>
+<br/>
+<form action="./Install.php" method="post" enctype="multipart/form-data">
+	<fieldset style="margin:auto; width:200px; padding: 10px; background-color:#AAAAAA;color:black;">
+		<legend>Database Installation Manager</legend>
+		<?php PrintSecTokenInput(); ?>
+		<br/>
+		<div style="align:center;width:500px;">
+			<div style="width:300px;">
+				<label class="loginLabel" for="pass">Install Page Password:</label><br/>
+				<input id="pass" type="password" name="pass" value="" /><br/>
+			</div>
+		</div>
+		<br/>
+		<div style="width:500px;">
+			<div style="float:left;margin-top:40px;">
+				<input type="submit" name="action" value="Uninstall" />&nbsp;
+				<input type="submit" name="action" value="Install" />&nbsp;
+			</div>
+			<div style="float:right;width:45%;">
+				<?php
+					//----------------------
+					$tableList = getTableList();
+					//----------------------
+					foreach ($tableList as $tbl)
+					{
+						list($obj, $tblFields, $tblName) = $tbl;
+						if ($tblName != "Login")
+							echo "<input type='checkbox' id='$tblName' name='$tblName' value='$tblName' />&nbsp;$tblName<br/>\n";
+					}
+					//----------------------
+				?>
+				<br/>
+				<label class="loginLabel" for="prefix">Backup/Import Prefix:</label><br/>
+				<input id="prefix" type="text" name="prefix" value="bak_" /><br/>
+				<br/>
+				<input type="submit" name="action" value="Backup" />&nbsp;&nbsp;<input type="submit" name="action" value="Import" /><br/>
+				<br/>
+				<input type="submit" name="action" value="Install Tables" />&nbsp;&nbsp;<input type="submit" name="action" value="Uninstall Tables" /><br/>
+			</div>
+		</div>
+	</fieldset>
+</form>
+</div>
+<br/>
+<?php
+//---------------------------------
+echo "<!--content end-->\n";
+//---------------------------------
+echo htmlFooter();
+//---------------------------------
+?>

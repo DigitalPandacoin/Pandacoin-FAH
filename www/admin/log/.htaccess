@@ -1,0 +1,6 @@
+# Denies web server access to log files.
+# For this restriction to work, mod rewrite must be on 
+# and override must be allowed.
+
+
+deny from all

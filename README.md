@@ -1,6 +1,6 @@
-# Dogecoin Folding at Home #
+# Pandacoin Folding at Home #
 
-Automated LAMP web application for monitoring a Folding @ Home team's folder stats and paying out Dogecoin rewards based on folding points.
+Automated LAMP web application for monitoring a Folding @ Home team's folder stats and paying out Pandacoin rewards based on folding points.
 
 ### Status ###
 
@@ -8,7 +8,7 @@ This system has been running live for a couple years. Refinement of web content 
 
 ### Requirements ###
 
-Linux, MySql, PHP, a web server, and a Dogecoin wallet accessible via RPC.
+Linux, MySql, PHP, a web server, and a Pandacoin wallet accessible via RPC.
 
 The system makes use of Linux's cron scheduling system and a few command line features for executing scripts. Currently there is no support for alternatives, which leaves it dependent to Linux servers for now.
 
@@ -16,7 +16,7 @@ The system makes use of Linux's cron scheduling system and a few command line fe
 
 Create a MySql database and user with privileges to it.
 
-Prepare a Dogecoin client with dogecoin.conf set to run an RPC server and note the connection details and credentials.
+Prepare a Pandacoin client with Pandacoin.conf set to run an RPC server and note the connection details and credentials.
 
 Copy all of the www folder to your published web server folder. 
 
@@ -25,7 +25,7 @@ In this www folder, copy ./include/Init.php.default to ./include/Init.php. Modif
 
 Copy ./Install.php.default to ./Install.php. Modify ./Install.php to set the security password for executing the install script and the default web user credentials.
 
-Prepare web server write permissions for the following files/folders relative to the DogecoinFah's www root.
+Prepare web server write permissions for the following files/folders relative to the PandacoinFah's www root.
 
  * ./admin/log
  * ./admin/log/archive

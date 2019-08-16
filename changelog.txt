@@ -1,10 +1,10 @@
-DogecoinFah Change Log
+PandacoinFah Change Log
 
 (Please enable line wrapping to view)
 
 April 29, 2017 - 1.0.0 - Added versioning, expanded contributions system and upgraded it to on-chain transactions.
 
-	At this point, DogecoinFah has been paying out for a year in addition to some months of live testing payouts. Readying for long term goals has begun. A version system was added for proper numbered releases. An expansion of the contribution system brings on-chain transactions for each contribution, in addition to the main payout. The 'All' contribution mode was added and it was tested along with the 'percent' mode. Adjustments were made to wait for confirmations before getting balances for calculations during the contribution payout process. The administrator interface to configure contributions was overhauled. An Ad system was added side-by side to give contributions an option for a linked simple ad consisting of configurable options.
+	At this point, PandacoinFah has been paying out for a year in addition to some months of live testing payouts. Readying for long term goals has begun. A version system was added for proper numbered releases. An expansion of the contribution system brings on-chain transactions for each contribution, in addition to the main payout. The 'All' contribution mode was added and it was tested along with the 'percent' mode. Adjustments were made to wait for confirmations before getting balances for calculations during the contribution payout process. The administrator interface to configure contributions was overhauled. An Ad system was added side-by side to give contributions an option for a linked simple ad consisting of configurable options.
 
 August 5, 2017 - 1.0.1 - Fixes related to contribution ads, fixed scaling bottleneck, and web review.
 
